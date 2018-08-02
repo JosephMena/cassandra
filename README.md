@@ -1,2 +1,2 @@
 # cassandra
-PoCs sobre programación apache cassandra
+PoCs sobre el framework apache cassandra
