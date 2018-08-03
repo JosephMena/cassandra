@@ -11,7 +11,7 @@ public class Test {
 	}
 	
 	private void realizarConsultaPersona() {
-		String consulta="select * from persona";
+		String consulta="select * from personas.persona";
 		
 		Session sesion=conectar();
 		ResultSet rs=sesion.execute(consulta);
@@ -22,7 +22,7 @@ public class Test {
 	
 	public Session conectar() {
 		Conexion cliente = new Conexion();
-		cliente.connect("127.0.0.1", 9142);
+		cliente.connect("127.0.0.1", 9042);
 		return cliente.getSession();
 	}
 

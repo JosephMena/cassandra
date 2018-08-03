@@ -7,7 +7,12 @@
 	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/cassandra-driver-mapping-3.5.1.jar"/>
 	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/guava-19.0.jar"/>
 	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/slf4j-api-1.7.25.jar"/>
-	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/netty-handler-4.0.56.Final.jar"/>
+	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/netty-common-4.0.56.Final.jar"/>
 	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/netty-transport-native-epoll-4.0.56.Final.jar"/>
+	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/netty-handler-4.0.56.Final.jar"/>
+	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/netty-transport-4.0.56.Final.jar"/>
+	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/metrics-core-3.2.2.jar"/>
+	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/netty-buffer-4.0.56.Final.jar"/>
+	<classpathentry kind="lib" path="C:/JM/Personal/Github/cassandra/3.11/libs/netty-codec-4.0.56.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
