@@ -1,0 +1,89 @@
+Cassandra:
+=========
+	
+	Iniciar:
+	-------
+		bin/cassandra
+		bin/cassandra -f
+
+
+	Data Modeling: Primary, Clustering, Partition, and Compound Keys:
+	----------------------------------------------------------------
+	
+		De [1], en cassandra como en otros motores nosql, una "tabla" puede contener registros(filas) con diferentes numeros de columnas, es decir un registro
+		puede tener 3 columnas y el siguiente registro tener 15 columnas. Otra caracteristica de cassandra es que los nombres de las columnas pueden ser 
+		de un tipo diferente a text, en contraposicion a las bds tradicionales donde los nombres de las columnas eran del tipo text, por ejemplo en las
+		bds tradicionales se encuentran los siguientes nombres de columna: nro_cuenta,nro_operacion, fecha_registro, y ellas son del tipo text, pero en 
+		cassandra los tipos de las columnas podrian ser integer o timestamp.
+		
+		Compound Primary Key:
+		
+			As the name suggests, a compound primary key is comprised of one or more columns that are referenced in the primary key. One component of the compound 
+			primary key is called partition key, whereas the other component is called the clustering key. The following are different variations of primary keys. 
+			Please note that C1, C2, C3,… and so on represent columns in the table.
+
+			C1: Primary key has only one partition key and no cluster key.
+
+			(C1, C2): Column C1 is a partition key and column C2 is a cluster key.
+
+			(C1,C2,C3,…): Column C1 is a partition key and columns C2, C3, and so on make the cluster key.
+
+			(C1, (C2, C3,…)): It is same as 3, i.e., column C1 is a partition key and columns C2,C3,… make the cluster key.
+
+			((C1, C2,…), (C3,C4,…)): columns C1, C2 make partition key and columns C3,C4,… make the cluster key.
+
+			It is important to note that when the compound key is C1, C2, C3, then the first key, C1, becomes the partition key, and the rest of the keys become 
+			part of the cluster key. In order to make composite partition keys, we have to specify keys in parenthesis such as: ( ( C1,C2) , C3, C4). In this case, 
+			C1 and C2 are part of the partition keys, and C3 and C4 are part of the cluster key.
+
+		Partition Key:
+		
+			The purpose of a partition key is to identify the partition or node in the cluster that stores that row. When data is read or written from the 
+			cluster, a function called Partitioner is used to compute the hash value of the partition key. This hash value is used to determine the 
+			node/partition which contains that row. For example, rows whose partition key values range from 1000 to 1234 may reside in node A, and rows 
+			with partition key values range from 1235 to 2000 may reside in node B, as shown in figure 1. If a row contains partition key whose hash value 
+			is 1233 then it will be stored in node A.
+	
+	
+	
+
+	CQLSH:
+		Requisitos:
+			Python v2.7
+	
+		CREATE KEYSPACE personas WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+		desc keyspaces;
+		
+		
+		use personas;
+		
+		create table persona(
+                        nombres text,
+                        apellidos text,
+                        dni int,
+                        primary key (dni)
+                );
+				
+		desc schema;
+		desc TABLES;
+		insert into persona(dni, nombres, apellidos) values(42569901,'Joseph','Mena');
+		
+		select * from persona;
+		
+		select * from persona where dni=42569901;
+		expand;
+		expand on;
+		
+		select token(dni) from persona;
+		
+			
+Java:
+----
+	
+	
+	
+
+URLs:
+----
+
+	[1] - https://dzone.com/articles/cassandra-data-modeling-primary-clustering-partiti
