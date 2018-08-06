@@ -1,8 +1,9 @@
 package org.zer0.pocs.cassandrademo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.zer0.pocs.cassandrademo.dto.Persona;
 import org.zer0.pocs.cassandrademo.repositorios.PersonaRepositorio;
@@ -13,13 +14,14 @@ public class TestController {
 	@Autowired
 	private PersonaRepositorio repositorioPersona;
 	
-	@RequestMapping("/persona")
-	public Persona getPersona(@RequestParam("id") String id) {
-		Persona p=new Persona();
-		p.setDni(42568871);
-		p.setNombres("Cesar");
-		p.setApellidos("Perez");
-		repositorioPersona.insert(p);
-		return new Persona();
+	@PostMapping(
+		path="/persona",
+		consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+		produces = {MediaType.APPLICATION_STREAM_JSON_VALUE,MediaType.APPLICATION_JSON_VALUE}
+	)
+	public Persona registrarPersona(@RequestBody Persona persona) {
+		repositorioPersona.insert(persona);
+		return persona;
 	}
+	
 }
