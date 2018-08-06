@@ -2,17 +2,13 @@ package org.zer0.pocs.cassandrademo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
+import org.springframework.data.cassandra.config.AbstractReactiveCassandraConfiguration;
 import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
-import org.springframework.data.cassandra.core.mapping.BasicCassandraMappingContext;
-import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
-import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
+import org.springframework.data.cassandra.repository.config.EnableReactiveCassandraRepositories;
 
 @Configuration
-@EnableCassandraRepositories(
-		basePackages = "org.zer0.pocs.cassandrademo.repositorios"
-	)
-public class CassandraConfiguracion extends AbstractCassandraConfiguration {
+@EnableReactiveCassandraRepositories(basePackages = "org.zer0.pocs.cassandrademo.repositorios")
+public class CassandraConfiguracion extends AbstractReactiveCassandraConfiguration {
 
 	@Override
 	protected String getKeyspaceName() {
@@ -20,16 +16,15 @@ public class CassandraConfiguracion extends AbstractCassandraConfiguration {
 	}
 
 	@Bean
-    public CassandraClusterFactoryBean cluster() {
-        CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();
-        cluster.setContactPoints("127.0.0.1");
-        cluster.setPort(9042);
-        return cluster;
-    }
- 
-    @Bean
-    public CassandraMappingContext cassandraMapping() throws ClassNotFoundException {
-        return new BasicCassandraMappingContext();
-    }
-	
+	public CassandraClusterFactoryBean cluster() {
+		CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();
+		cluster.setContactPoints("127.0.0.1");
+		cluster.setPort(9042);
+		return cluster;
+	}
+
+	public String[] getEntityBasePackages() {
+		return new String[] { "com.oreilly.springdata.cassandra" };
+	}
+
 }
