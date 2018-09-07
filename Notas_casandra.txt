@@ -6,7 +6,88 @@ Cassandra:
 		bin/cassandra
 		bin/cassandra -f
 
+	Teoria:
+	------
+		Keyspace: Es el analogo a un esquema en las bds tradicionales, es decir el keyspace es quien almacena las colecciones o tablas. [2]
+				  Un keyspace define el numero de opciones que seran aplicacdas a las tablas contenidas en el, por ejemplo la estrategia de replicacion.
+				  Lo que se recomienda es que exista un keyspace por aplicacion.
+				  
+		Table:	Es donde se almacena la informacion.
+				  
+		
+		Para la definicion de keyspace o tables se toma en cuenta lo siguiente:
+		
+			keyspace_name ::=  name
+			table_name    ::=  [ keyspace_name '.' ] name
+			name          ::=  unquoted_name | quoted_name
+			unquoted_name ::=  re('[a-zA-Z_0-9]{1, 48}')
+			quoted_name   ::=  '"' unquoted_name '"'
+			
+			
+		Replication Strategy:
+		--------------------
+		
+		
+		Consistencia:
+		------------
+			Consistencia se refiere a como actualizar y sincronizar una fila de datos en todas las replicas, cassandra extiende el concepto de Eventual Consistensy [4] ofreciendo
+			tunnable consistency. Tunable consistency significa que para cualquier operacion de lectura o escritura, el cliente decide que tan consistentes deben ser los datos solicitados.
+			
+			Incluso en bajo niveles de consistencia, cassandra escribe a todas las replicas del partition key, incluso replicas en otros datacenters. El nivel de consistencia determina solo
+			el numero de replicas que necesitan reconocer el exito de escrituras en el cliente. Tipicamente un cliente establace el nivel de consistencia que es menor que el factor de 
+			replicacion especificado por el keyspace. Esta practica asegura que el server coordinador reporta las escrituras exitosas incluso si algunas replicas estan caidas u otras no 
+			responden a las escrituras.
+			
+			El nivel de consistencia de lectura especifica cuantas replicas deben responder a la solicitud de lectura antes de que se retorne la data al cliente, cassandra chequea el numero
+			especificado de replicas para satisfacer el read request.
+			
+			Nota:
+				De [5], en sistemas distribuidos como cassandra, el mas reciente valor de data no esta necesariamente sobre cada nodo en todo momento. El cliente configura el nivel de consistencia
+				por solicitud para gestionar el tiempo de respuesta frente a la precision de los datos y va de esta forma:
+				
+				- ONE, retorna la data desde a replica mas cercana.
+				- QUORUM, retorna la mas reciente data desde la mayoria de las replicas.
+				- ALL, retorna la data mas reciente desde todas las replicas.
+			
+				Para realizar un ejemplo de esto ir a [5].
+				
+				
+		Factor de Replicacion, Estrategia de replicacion:
+		------------------------------------------------
+		
+			Cassandra almacena la data sobre multiples nodos para asegurar la fiabilidad y fault tolerance. La estrategia de replicacion para cada keyspace determina los nodos donde las replicas
+			son localizadas.
+			
+			El numero total de replicas para un keyspace a traves de un cluster cassandra se conoce como el factor de replicacion del keyspace. Un factor de replicacion de 1 significa que solo
+			hay 1 copia de cada fila en el cluster de cassandra. Un factor de replicacion de 2 significa que hay 2 copias de cada fila, donde cada copia esta sobre un diferente nodo. Todas las 
+			replicas son igualmente importantes, no existe una replica primeria o master.
+			
+			En un ambiente productivo con 3 o mas nodos cassandra en cada datacenter, el factor de replicacion por defecto para un keyspace es de 3. Como una regla general, el factor de replicacion
+			no debe exceder el numero de nodos en el cluster.
+			
+			Usa el siguiente procedimiento para ver el factor de replicacion:
+			
+			cassandra-cli -h $(hostname -i) <<< "show schema;"
+			
+			Where $(hostname -i) resolves to the IP address of the Cassandra node. Or you can replace $(hostname -i) with the IP address of the node.
+			
+			For each keyspace, you will see output in the form:
 
+			create keyspace kms
+			  with placement_strategy = 'NetworkTopologyStrategy'
+			  and strategy_options = {dc-1 : 3}
+			  and durable_writes = true;
+
+			You can see that for data center 1, dc-1, the default replication factor for the kms keyspace is three for an installation with three Cassandra nodes.
+				
+			If you add additional Cassandra nodes to the cluster, the default replication factor is not affected. However, if you decide that you want to increase the replication factor, contact Apigee.
+
+			For example, if you increase the number of Cassandra nodes to six, but leave the replication factor at three, you do not ensure that all Cassandra nodes have a copy of all the data. If a node goes down,
+			a higher replication factor means a higher probability that the data on the node exists on one of the remaining nodes. The downside of a higher replication factor is an increased latency on data writes.	
+				
+				
+				
+				
 	Data Modeling: Primary, Clustering, Partition, and Compound Keys:
 	----------------------------------------------------------------
 	
@@ -87,3 +168,8 @@ URLs:
 ----
 
 	[1] - https://dzone.com/articles/cassandra-data-modeling-primary-clustering-partiti
+	[2] - http://cassandra.apache.org/doc/latest/cql/ddl.html
+	[3] - https://docs.datastax.com/en/cassandra/2.1/cassandra/dml/dmlAboutDataConsistency.html
+	[4] - https://en.wikipedia.org/wiki/Eventual_consistency
+	[5] - https://docs.datastax.com/en/cql/3.1/cql/cql_using/useTracing.html
+	[6] - https://docs.apigee.com/private-cloud/v4.17.09/about-cassandra-replication-factor-and-consistency-level
